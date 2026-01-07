@@ -9,7 +9,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
 from src.main_infer import predict_next_from_values  # <- seu código de inferência
-from middleware.response_time import ResponseTimeMiddleware
+from src.middleware.response_time import ResponseTimeMiddleware
 
 app = FastAPI(title="LSTM model API")
 app.add_middleware(ResponseTimeMiddleware)
