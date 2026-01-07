@@ -1,0 +1,15 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: lstm_app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - API_HOST=0.0.0.0
+      - API_PORT=9010
+    command: ["python", "-m", "src.main_api"]
+    ports:
+      - "9010:9010"
+    volumes:
+      - ./checkpoints:/app/checkpoints
