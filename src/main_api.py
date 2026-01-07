@@ -10,8 +10,20 @@ from pydantic import BaseModel, Field
 
 from src.main_infer import predict_next_from_values  # <- seu código de inferência
 from src.middleware.response_time import ResponseTimeMiddleware
+import time
+from starlette.middleware.base import BaseHTTPMiddleware
+
 
 app = FastAPI(title="LSTM model API")
+
+
+class ResponseTimeMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        start = time.perf_counter()
+        response = await call_next(request)
+        response.headers["X-Response-Time-ms"] = f"{(time.perf_counter() - start)*1000:.2f}"
+        return response
+
 app.add_middleware(ResponseTimeMiddleware)
 
 
