@@ -11,6 +11,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential curl \
   && rm -rf /var/lib/apt/lists/*
 
+RUN pip install \
+  --extra-index-url https://download.pytorch.org/whl/cu121 \
+  torch==2.4.1+cu121 torchvision==0.19.1+cu121 torchaudio==2.4.1+cu121
+
 # Poetry
 RUN pip install --no-cache-dir poetry
 
