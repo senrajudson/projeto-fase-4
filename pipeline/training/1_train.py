@@ -5,8 +5,8 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader, TensorDataset
 
-from src.config import TrainConfig
-from src.loader import load_module
+from pipeline.config import TrainConfig
+from pipeline.loader import load_module
 
 _model = load_module(__file__, "../model/1_lstm.py", "lstm_model")
 _eval = load_module(__file__, "2_evaluate.py", "evaluate")

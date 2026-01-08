@@ -3,8 +3,8 @@ from __future__ import annotations
 
 from typing import Any, Dict
 
-from src.config import TrainConfig
-from src.loader import load_module
+from pipeline.config import TrainConfig
+from pipeline.loader import load_module
 
 # Carrega módulos (mantém seu padrão atual)
 _data = load_module(__file__, "data/1_source_yahoo.py", "data")

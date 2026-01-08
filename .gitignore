@@ -1,2 +1,5 @@
 *pycache*
 *lock*
+*checkpoint*
+*.pt*
+*.csv*

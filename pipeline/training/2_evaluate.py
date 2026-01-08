@@ -3,7 +3,7 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 
-from src.loader import load_module
+from pipeline.loader import load_module
 
 _norm = load_module(__file__, "../preprocessing/2_normalization.py", "norm")
 

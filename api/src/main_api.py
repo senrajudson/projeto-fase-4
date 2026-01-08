@@ -8,7 +8,7 @@ import anyio
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
-from src.main_infer import predict_next_from_values  # <- seu código de inferência
+from src.model.main_infer import predict_next_from_values  # <- seu código de inferência
 from src.middleware.response_time import ResponseTimeMiddleware
 import time
 from starlette.middleware.base import BaseHTTPMiddleware

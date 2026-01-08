@@ -9,8 +9,8 @@ import torch
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from src.config import TrainConfig
-from src.loader import load_module
+from pipeline.config import TrainConfig
+from pipeline.loader import load_module
 
 _data = load_module(__file__, "../data/1_source_yahoo.py", "data")
 _integrity = load_module(__file__, "../preprocessing/1_integrity.py", "integrity")

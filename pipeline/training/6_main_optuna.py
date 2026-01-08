@@ -3,8 +3,8 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from src.config import TrainConfig
-from src.loader import load_module
+from pipeline.config import TrainConfig
+from pipeline.loader import load_module
 
 _optuna = load_module(__file__, "4_optuna_hpo.py", "optuna_hpo")
 

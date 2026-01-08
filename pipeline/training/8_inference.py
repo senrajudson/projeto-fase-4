@@ -6,8 +6,8 @@ import torch
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from src.config import TrainConfig
-from src.loader import load_module
+from pipeline.config import TrainConfig
+from pipeline.loader import load_module
 
 _model = load_module(__file__, "../model/1_lstm.py", "lstm_model")
 _ckpt = load_module(__file__, "3_checkpointing.py", "checkpointing")

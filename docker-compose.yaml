@@ -1,7 +1,7 @@
 services:
   app:
     build:
-      context: .
+      context: ./api/
       dockerfile: dockerfile
     container_name: lstm_app
     environment:

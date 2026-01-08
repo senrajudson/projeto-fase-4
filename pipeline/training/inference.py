@@ -1,4 +1,4 @@
-from src.loader import load_module
+from pipeline.loader import load_module
 
 _impl = load_module(__file__, "8_inference.py", "inference_impl")
 
