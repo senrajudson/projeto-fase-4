@@ -1,34 +1,35 @@
-# src/main.py
 from __future__ import annotations
 
+import os
+import time
+from functools import partial
 from pathlib import Path
 from typing import List, Optional
 
 import anyio
-from fastapi import FastAPI, HTTPException
+import uvicorn
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel, Field
 
-from src.model.main_infer import predict_next_from_values  # <- seu código de inferência
-from src.middleware.response_time import ResponseTimeMiddleware
-import time
-from starlette.middleware.base import BaseHTTPMiddleware
+from src.model.main_infer import predict_next_from_values
 
 
 app = FastAPI(title="LSTM model API")
 
 
-class ResponseTimeMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request, call_next):
-        start = time.perf_counter()
-        response = await call_next(request)
-        response.headers["X-Response-Time-ms"] = f"{(time.perf_counter() - start)*1000:.2f}"
-        return response
-
-app.add_middleware(ResponseTimeMiddleware)
+# ----------------------------
+# MIDDLEWARE
+# ----------------------------
+@app.middleware("http")
+async def response_time_middleware(request: Request, call_next):
+    t0 = time.perf_counter()
+    resp = await call_next(request)
+    resp.headers["X-Response-Time-ms"] = f"{(time.perf_counter() - t0) * 1000:.2f}"
+    return resp
 
 
 # ----------------------------
-# PREDICT
+# SCHEMAS
 # ----------------------------
 class PredictRequest(BaseModel):
     values: List[float] = Field(..., min_length=1, description="Série de valores (floats)")
@@ -36,25 +37,26 @@ class PredictRequest(BaseModel):
     device: Optional[str] = Field(default=None, description="Ex: 'cpu' ou 'cuda'")
 
 
+def ensure_checkpoint(path_str: str) -> Path:
+    ckpt_path = Path(path_str)
+    if not ckpt_path.exists():
+        raise HTTPException(status_code=404, detail=f"Checkpoint não encontrado: {ckpt_path}")
+    return ckpt_path
+
+
+# ----------------------------
+# ROUTES
+# ----------------------------
 @app.post("/predict")
-async def predict_endpoint(req: PredictRequest):
+async def predict(req: PredictRequest):
+    ckpt_path = ensure_checkpoint(req.checkpoint_path)
+
     try:
-        ckpt_path = Path(req.checkpoint_path)
+        # roda inferência em thread para não bloquear o event loop
+        fn = partial(predict_next_from_values, req.values, str(ckpt_path), req.device)
+        pred, ckpt = await anyio.to_thread.run_sync(fn)
 
-        # (opcional) força ficar dentro do projeto, evita caminho arbitrário:
-        # ckpt_path = (Path("/app") / req.checkpoint_path).resolve()
-
-        if not ckpt_path.exists():
-            raise HTTPException(status_code=404, detail=f"Checkpoint não encontrado: {ckpt_path}")
-
-        pred, ckpt = await anyio.to_thread.run_sync(
-            predict_next_from_values,
-            req.values,
-            str(ckpt_path),
-            req.device,
-        )
-
-        cfg = ckpt.get("config", {})
+        cfg = (ckpt or {}).get("config", {})
         return {
             "ok": True,
             "prediction": pred,
@@ -64,19 +66,21 @@ async def predict_endpoint(req: PredictRequest):
             "feature": cfg.get("feature"),
         }
 
-    except HTTPException:
-        raise
     except ValueError as e:
-        # erros de validação do seu infer (série curta, vazia, etc.)
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-if __name__ == "__main__":
-    import os
-    import uvicorn
-
+# ----------------------------
+# ENTRYPOINT
+# ----------------------------
+def main():
     host = os.getenv("API_HOST", "0.0.0.0")
     port = int(os.getenv("API_PORT", "9010"))
-    uvicorn.run("src.main_api:app", host=host, port=port, reload=True)
+    reload = os.getenv("API_RELOAD", "true").lower() in ("1", "true", "yes", "y")
+    uvicorn.run(app, host=host, port=port)
+
+
+if __name__ == "__main__":
+    main()

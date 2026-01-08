@@ -30,16 +30,7 @@ def run_optuna_study(cfg: TrainConfig, series, n_trials: int, timeout_sec, best_
 
 
 def main() -> None:
-    cfg = TrainConfig(
-        symbol="DIS",
-        start_date="2018-01-01",
-        end_date="2024-07-20",
-        feature="Close",
-        train_ratio=0.85,
-        val_ratio_within_train=0.15,
-        max_epochs=60,
-        patience=12,
-    )
+    cfg = TrainConfig()
 
     n_trials = 40
     timeout_sec = None

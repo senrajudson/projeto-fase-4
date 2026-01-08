@@ -3,7 +3,7 @@ import torch
 
 @dataclass
 class TrainConfig:
-    symbol: str = "DIS"
+    symbol: str = "BTC-USD"
     start_date: str = "2018-01-01"
     end_date: str = "2024-07-20"
     feature: str = "Close"
