@@ -10,7 +10,7 @@ import uvicorn
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel, Field
 
-from src.model.inference import predict
+from src.model.inference import predict as model_predict
 
 
 app = FastAPI(title="LSTM model API")
@@ -45,12 +45,12 @@ def ensure_checkpoint(path_str: str) -> Path:
 # ROUTES
 # ----------------------------
 @app.post("/predict")
-async def predict(req: PredictRequest):
+async def predict_endpoint(req: PredictRequest):
     ckpt_path = ensure_checkpoint("/app/model/best_pareto_lstm.pt")
 
     try:
         device = "cuda" if torch.cuda.is_available() else "cpu"
-        result = predict(req.values, str(ckpt_path), device)
+        result = model_predict(req.values, str(ckpt_path), device)
 
         cfg = (result or {}).get("config", {})
         return {
