@@ -1,11 +1,7 @@
 import argparse
-import os
-import sys
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-
-from pipeline.config import TrainConfig
-from pipeline.loader import load_module
+from config import TrainConfig
+from loader import load_module
 
 _data = load_module(__file__, "../data/1_source_yahoo.py", "data")
 _integrity = load_module(__file__, "../preprocessing/1_integrity.py", "integrity")
@@ -14,7 +10,7 @@ _train = load_module(__file__, "1_train.py", "train")
 
 
 def parse_args() -> argparse.Namespace:
-    cfg = TrainConfig()
+    cfg = TrainConfig(optuna_output_dir="5_main_train_result")
     parser = argparse.ArgumentParser(description="Treino LSTM com pipeline em camadas")
 
     parser.add_argument("--symbol", default=cfg.symbol)

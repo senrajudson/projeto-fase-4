@@ -1,10 +1,5 @@
-import os
-import sys
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-
-from pipeline.config import TrainConfig
-from pipeline.loader import load_module
+from config import TrainConfig
+from loader import load_module
 
 _data = load_module(__file__, "../data/1_source_yahoo.py", "data")
 _integrity = load_module(__file__, "../preprocessing/1_integrity.py", "integrity")
@@ -19,6 +14,7 @@ def main() -> None:
         start_date="2018-01-01",
         end_date="2024-07-20",
         feature="Close",
+        optuna_output_dir="7_main_train_only_result",
         sequence_length=60,
         batch_size=64,
         learning_rate=1e-3,

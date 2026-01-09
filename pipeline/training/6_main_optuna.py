@@ -1,10 +1,7 @@
-import os
-import sys
+from datetime import datetime
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-
-from pipeline.config import TrainConfig
-from pipeline.loader import load_module
+from config import TrainConfig
+from loader import load_module
 
 _optuna = load_module(__file__, "4_optuna_hpo.py", "optuna_hpo")
 
@@ -16,11 +13,14 @@ def main() -> None:
         start_date="2018-01-01",
         end_date="2024-07-20",
         feature="Close",
+        optuna_output_dir="6_main_optuna_result",
         train_ratio=0.85,
         val_ratio_within_train=0.15,
         max_epochs=60,
         patience=12,
     )
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")[:-3]
+    cfg.study_name = f"{cfg.study_name}_{timestamp}"
 
     n_trials = 40
     timeout_sec = None

@@ -1,14 +1,28 @@
-# PyTorch estável para Driver 535 / CUDA 12.x (usa wheel cu121)
---extra-index-url https://download.pytorch.org/whl/cu121
-torch
-torchvision
-torchaudio
+# # Mantém PyPI como padrão e adiciona o índice do PyTorch (CUDA 11.8)
+# --extra-index-url https://download.pytorch.org/whl/cu118
 
-# Evita conflito com OpenCV / Ultralytics / Torch
-numpy<2.0
+# torch==2.5.1
+# torchvision==0.20.1
+# torchaudio==2.5.1
 
-# Core libs
-pandas
+# # Core libs (Python 3.12)
+# numpy>=2.0
+# pandas>=2.2
+
+# yfinance
+# optuna
+# optuna-dashboard
+
+
+--extra-index-ur https://download.pytorch.org/whl/cu121
+
+torch==2.5.1 
+torchvision==0.20.1 
+torchaudio==2.5.1
+
+numpy>=2.0
+pandas>=2.2
+
 yfinance
 optuna
 optuna-dashboard

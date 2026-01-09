@@ -1,16 +1,12 @@
 from dataclasses import asdict
+from pathlib import Path
 from typing import List
-
-import os
-import sys
 
 import optuna
 import torch
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-
-from pipeline.config import TrainConfig
-from pipeline.loader import load_module
+from config import TrainConfig
+from loader import load_module
 
 _data = load_module(__file__, "../data/1_source_yahoo.py", "data")
 _integrity = load_module(__file__, "../preprocessing/1_integrity.py", "integrity")
@@ -59,18 +55,28 @@ def _export_pareto_csv(study: optuna.Study, path: str) -> None:
     df.to_csv(path, index=False)
 
 
+def _ensure_optuna_paths(cfg: TrainConfig) -> None:
+    storage_path = cfg.storage_path
+    if storage_path.startswith("sqlite:///"):
+        sqlite_file = Path(storage_path.replace("sqlite:///", "", 1))
+        sqlite_file.parent.mkdir(parents=True, exist_ok=True)
+
+    for path in (cfg.pareto_csv_path, cfg.best_checkpoint_path, cfg.checkpoints_dir):
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+
+
 def build_objective(cfg: TrainConfig, normalized_series: torch.Tensor, mean: float, std: float):
     def objective(trial: optuna.Trial):
         cfg_local = TrainConfig(**asdict(cfg))
 
-        cfg_local.sequence_length = trial.suggest_int("sequence_length", 20, 120, step=10)
-        cfg_local.hidden_size = trial.suggest_categorical("hidden_size", [32, 64, 128, 256])
-        cfg_local.num_layers = trial.suggest_int("num_layers", 2, 4)
-        cfg_local.dropout = trial.suggest_float("dropout", 0.0, 0.3)
-        cfg_local.learning_rate = trial.suggest_float("learning_rate", 1e-4, 5e-3, log=True)
-        cfg_local.batch_size = trial.suggest_categorical("batch_size", [32, 64, 128])
-        cfg_local.max_epochs = trial.suggest_int("max_epochs", 30, 120, step=30)
-        cfg_local.patience = trial.suggest_int("patience", 10, 25, step=5)
+        cfg_local.sequence_length = trial.suggest_int("sequence_length", 20, 120, step=10)  # Janela de entrada.
+        cfg_local.hidden_size = 256 # trial.suggest_categorical("hidden_size", [32, 64, 128, 256])  # Unidades LSTM.
+        cfg_local.num_layers = trial.suggest_int("num_layers", 2, 4)  # Camadas LSTM.
+        cfg_local.dropout = 0.3  # Dropout fixo (teste; antes era trial.suggest_float).
+        cfg_local.learning_rate = trial.suggest_float("learning_rate", 1e-4, 5e-3, log=True)  # Taxa de aprendizado.
+        cfg_local.batch_size = 256 #trial.suggest_categorical("batch_size", [32, 64, 128])  # Tamanho do batch.
+        cfg_local.max_epochs = 100  # Epocas fixas (teste; antes era trial.suggest_int).
+        cfg_local.patience = 15  # Early stopping fixo (teste; antes era trial.suggest_int).
 
         metrics_test, ckpt_path, val_loss_best = _train.train_model(
             cfg=cfg_local,
@@ -100,6 +106,8 @@ def run_optuna_with_series(
 
     mean, std = _norm.compute_train_stats(series, cfg.train_ratio)
     normalized = _norm.normalize_with_stats(series, mean, std)
+
+    _ensure_optuna_paths(cfg)
 
     storage = optuna.storages.RDBStorage(url=cfg.storage_path)
     pruner = optuna.pruners.MedianPruner(n_startup_trials=5, n_warmup_steps=10)

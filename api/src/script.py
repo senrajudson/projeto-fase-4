@@ -20,8 +20,6 @@ COLUMN_DEFAULT = "Close"
 N_DEFAULT = 200
 START_INDEX_DEFAULT = 300
 
-CHECKPOINT_DEFAULT = "checkpoints/best.pt"
-DEVICE_DEFAULT = ""  # "cpu" | "cuda" | ""
 
 
 def parse_float(s: str) -> float:
@@ -141,9 +139,6 @@ def main() -> int:
     ap.add_argument("--n", type=int, default=N_DEFAULT,
                     help="tamanho da janela enviada ao modelo (seq_len)")
 
-    ap.add_argument("--checkpoint", default=CHECKPOINT_DEFAULT)
-    ap.add_argument("--device", default=DEVICE_DEFAULT, help="cpu|cuda (opcional)")
-
     args = ap.parse_args()
 
     url = args.base_url.rstrip("/") + "/predict"
@@ -170,9 +165,7 @@ def main() -> int:
     window = all_values[start:end_input]
     real_next = all_values[target_idx]
 
-    payload = {"values": window, "checkpoint_path": args.checkpoint}
-    if args.device.strip():
-        payload["device"] = args.device.strip()
+    payload = {"values": window}
 
     print(f"POST {url}")
     print(f"CSV: {csv_path}")

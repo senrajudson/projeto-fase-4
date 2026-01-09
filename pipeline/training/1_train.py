@@ -5,8 +5,8 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader, TensorDataset
 
-from pipeline.config import TrainConfig
-from pipeline.loader import load_module
+from config import TrainConfig
+from loader import load_module
 
 _model = load_module(__file__, "../model/1_lstm.py", "lstm_model")
 _eval = load_module(__file__, "2_evaluate.py", "evaluate")
@@ -33,6 +33,10 @@ def train_model(
     inputs, targets = _window.create_window_tensors(normalized_series, cfg.sequence_length)
     (tr_x, tr_y), (va_x, va_y), (te_x, te_y) = _window.split_train_val_test(
         inputs, targets, cfg.train_ratio, cfg.val_ratio_within_train
+    )
+    print(
+        "Amostras -> treino: "
+        f"{tr_x.size(0)}, validacao: {va_x.size(0)}, teste: {te_x.size(0)}"
     )
 
     train_ds = TensorDataset(tr_x, tr_y)

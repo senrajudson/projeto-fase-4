@@ -1,13 +1,9 @@
 from typing import Any, Dict, Optional, Tuple
-import os
-import sys
 
 import torch
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-
-from pipeline.config import TrainConfig
-from pipeline.loader import load_module
+from config import TrainConfig
+from loader import load_module
 
 _model = load_module(__file__, "../model/1_lstm.py", "lstm_model")
 _ckpt = load_module(__file__, "3_checkpointing.py", "checkpointing")
