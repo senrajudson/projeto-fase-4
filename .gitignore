@@ -1,6 +1,5 @@
 *pycache*
 *lock*
-*checkpoint*
 *.pt*
 *.csv*
 .venv
