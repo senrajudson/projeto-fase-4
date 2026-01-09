@@ -12,7 +12,7 @@ import urllib.error
 # =========================
 # CONFIG (variáveis globais)
 # =========================
-BASE_URL_DEFAULT = "http://10.247.168.43:9010"
+BASE_URL_DEFAULT = "http://127.0.1:9010"
 TIMEOUT_DEFAULT = 120
 
 CSV_DEFAULT = "BTC-USD_historico_completo.csv"

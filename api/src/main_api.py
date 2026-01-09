@@ -10,7 +10,7 @@ import uvicorn
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel, Field
 
-from model.inference import predict
+from src.model.inference import predict
 
 
 app = FastAPI(title="LSTM model API")
