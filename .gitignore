@@ -1,7 +1,6 @@
 *pycache*
 *lock*
 
-*.csv*
 .venv
 
 main_optuna_result
