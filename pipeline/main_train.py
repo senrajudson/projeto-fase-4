@@ -57,6 +57,8 @@ def run_training(cfg: TrainConfig) -> Dict[str, Any]:
     }
 
 
+#Params = [sequence_length: 110, num_layers: 2, learning_rate: 0.0018322874212267659]
+
 def main() -> None:
     # Exemplo local (continua funcionando via CLI)
     cfg = TrainConfig(
@@ -65,9 +67,9 @@ def main() -> None:
         end_date="2024-07-20",
         feature="Close",
         optuna_output_dir="main_train_result",
-        sequence_length=60,
+        sequence_length=110,
         batch_size=64,
-        learning_rate=1e-3,
+        learning_rate=0.0018322874212267659,
         hidden_size=128,
         num_layers=2,
         dropout=0.2,
