@@ -1,5 +1,9 @@
 *pycache*
 *lock*
-*.pt*
+
 *.csv*
 .venv
+
+main_optuna_result
+main_train_result
+main_infer_result

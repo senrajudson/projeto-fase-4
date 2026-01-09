@@ -118,10 +118,10 @@ def fastapi_predict_endpoint(payload: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def main() -> None:
-    checkpoint_path = "best_pareto_lstm.pt"
+    checkpoint_path = "./main_train_result/best_pareto_lstm.pt"
     _ = load_model(checkpoint_path, device=None)
     example_with_fake_data(checkpoint_path)
-    tutorial_use_model()
+    #tutorial_use_model()
 
 
 if __name__ == "__main__":
