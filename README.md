@@ -83,10 +83,10 @@ Saida (JSON)
 ```
 Observações
 - `values` deve conter uma lista de floats com tamanho igual ao `sequence_length` usado no treino.
-- O checkpoint e fixo em `checkpoints/best.pt` e deve existir no container.
+- O checkpoint e fixo em `/app/model/best_pareto_lstm.pt` e deve existir no container.
 
 #### Docker
-- `docker-compose.yaml` sobe a API e monta `./checkpoints` em `/app/checkpoints`.
+- `docker-compose.yaml` sobe a API e monta `./api/modelo` em `/app/model`.
 - O container expõe a porta 9010.
 
 ### Parte 3 - Como executar o código

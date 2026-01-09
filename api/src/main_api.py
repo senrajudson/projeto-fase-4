@@ -46,7 +46,7 @@ def ensure_checkpoint(path_str: str) -> Path:
 # ----------------------------
 @app.post("/predict")
 async def predict(req: PredictRequest):
-    ckpt_path = ensure_checkpoint("checkpoints/best_pareto_lstm.pt")
+    ckpt_path = ensure_checkpoint("/app/model/best_pareto_lstm.pt")
 
     try:
         device = "cuda" if torch.cuda.is_available() else "cpu"

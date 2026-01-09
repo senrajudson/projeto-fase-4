@@ -13,4 +13,4 @@ services:
     ports:
       - "9010:9010"
     volumes:
-      - ./api/modelo:/app/checkpoints
+      - ./api/modelo:/app/model
